@@ -3,6 +3,34 @@
 #include "murmur.h"
 
 #include <stdlib.h>
+#include <string.h>
+
+#define HT_INITIAL_SIZE 64
+
+typedef struct hash_entry {
+    void *key;
+    void *value;
+    size_t key_size;
+    size_t value_size;
+    struct hash_entry *next;
+} hash_entry;
+
+// inserts an existing hash entry into the hash table
+void ht_insert_he(hash_table *table, hash_entry *entry);
+
+// calulates the index in the hash table's internal array
+// from the given key (used for debugging currently)
+unsigned int ht_index(hash_table *table, void *key, size_t key_size);
+
+//----------------------------------
+// HashEntry functions
+//----------------------------------
+
+hash_entry *he_create(int flags, void *key, size_t key_size, void *value, size_t value_size);
+void he_destroy(int flags, hash_entry *entry);
+
+int he_key_compare(hash_entry *e1, hash_entry *e2);
+void he_set_value(int flags, hash_entry *entry, void *value, size_t value_size);
 
 uint32_t global_seed = 2976579765;
 
