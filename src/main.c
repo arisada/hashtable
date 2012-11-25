@@ -134,6 +134,15 @@ int main(int argc, char *argv[])
     t2 = snap_time();
 
     debug("Inserting %d keys (on preallocated table) took %.2f seconds", key_count, get_elapsed(t1, t2));
+    hash_iterator it;
+    ht_it_init(&it, &ht);
+    int count = 0;
+    while(ht_it_next(&it)){
+      count++;
+    }
+    test (count == key_count, "%d keys iterated", count);
+    ht_it_destroy(&it);
+
     for(i = 0; i < key_count; i++)
     {
         ht_remove(&ht, &(many_keys[i]), sizeof(many_keys[i]));

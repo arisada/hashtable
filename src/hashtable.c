@@ -365,4 +365,53 @@ error:
 }
 
 
+//---------------------------------
+// hash_iterator functions
+//---------------------------------
 
+void ht_it_init(hash_iterator *it, hash_table *table){
+    it->table=table;
+    it->index = 0;
+    it->entry = NULL;
+}
+
+int ht_it_next(hash_iterator *it){
+    if (it->entry != NULL){
+        it->entry = it->entry->next;
+        if (it->entry != NULL)
+          return 1;
+        it->index++;
+    }
+    while (it->index < it->table->array_size &&
+        it->table->array[it->index] == NULL){
+        it->index++;
+    }
+    if (it->index >= it->table->array_size)
+      return 0;
+    it->entry=it->table->array[it->index];
+    return 1;
+}
+
+void *ht_it_get_key(hash_iterator *it, size_t *size){
+    if (it->entry != NULL){
+        if(size)
+            *size=it->entry->key_size;
+        return it->entry->key;
+    }
+    return NULL;
+}
+
+void *ht_it_get_value(hash_iterator *it, size_t *size){
+    if (it->entry != NULL){
+        if(size)
+            *size = it->entry->value_size;
+        return it->entry->value;
+    }
+    return NULL;
+}
+
+void ht_it_destroy(hash_iterator *it){
+    it->table=NULL;
+    it->index=0;
+    it->entry=NULL;
+}

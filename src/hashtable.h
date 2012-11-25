@@ -22,6 +22,12 @@ typedef struct hash_table {
     int flags;
 } hash_table;
 
+typedef struct ht_iterator {
+    hash_table *table;
+    hash_entry *entry;
+    unsigned int index;
+} hash_iterator;
+
 // HT flags
 #define HT_NONE 0
 #define HT_KEY_CONST 1
@@ -88,6 +94,31 @@ void he_destroy(int flags, hash_entry *entry);
 
 int he_key_compare(hash_entry *e1, hash_entry *e2);
 void he_set_value(int flags, hash_entry *entry, void *value, size_t value_size);
+
+
+//----------------------------------
+// Hashtable Iterator functions
+//----------------------------------
+
+// Initializes an iterator that can be used to iterate
+// inside the hash table entries. The hash table *cannot* be changed
+// during the iteration
+void ht_it_init(hash_iterator *it, hash_table *table);
+
+// Fetch a new entry. Returns 1 if there is an entry,
+// 0 if we are on end of table.
+int ht_it_next(hash_iterator *it);
+
+// Fetch the key of the current entry. If size is not null,
+// it will contain the size of the key
+void *ht_it_get_key(hash_iterator *it, size_t *size);
+
+// Fetch the value of the current entry. If size is not null,
+// it will contain the size of the value
+void *ht_it_get_value(hash_iterator *it, size_t *size);
+
+// Destroy an iterator
+void ht_it_destroy(hash_iterator *it);
 
 #endif
         
