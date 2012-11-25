@@ -231,7 +231,7 @@ void ht_resize(hash_table *table, unsigned int new_size)
 {
     hash_table new_table;
 
-    debug("ht_resize(old=%d, new=%d)",table->array_size,new_size);
+    //debug("ht_resize(old=%d, new=%d)",table->array_size,new_size);
     new_table.array_size = new_size;
     new_table.array = malloc(new_size * sizeof(hash_entry*));
     new_table.key_count = 0;
@@ -246,13 +246,20 @@ void ht_resize(hash_table *table, unsigned int new_size)
     
     hash_entry *entry;
     hash_entry *next;
+    hash_entry *tmp;
+    unsigned int index;
     for(i = 0; i < table->array_size; i++)
     {
         entry = table->array[i];
         while(entry != NULL)
         {
             next = entry->next;
-            ht_insert_he(&new_table, entry);
+            index = ht_index(&new_table, entry->key, entry->key_size);
+            tmp = new_table.array[index];
+            entry->next = tmp;
+            new_table.array[index]=entry;
+            if(tmp != NULL)
+              new_table.collisions++;
             entry = next;
         }
         table->array[i]=NULL;
